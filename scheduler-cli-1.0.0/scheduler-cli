@@ -1,0 +1,6 @@
+#!/bin/bash
+# Launcher script for scheduler-cli on Linux/macOS
+# Place this in your distribution along with scheduler-cli.jar and lib/
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+java -jar "$SCRIPT_DIR/scheduler-cli.jar" "$@"
