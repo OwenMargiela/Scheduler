@@ -112,5 +112,6 @@ Where:
 - **"Command not recognized"**: Ensure you're in the scheduler-cli directory
 - **Permission denied** (Linux/macOS): Run `chmod +x scheduler-cli` first
 - **Metrics shows zeros**: Ensure scheduler is running and jobs have been added
+[Executable JAR](https://github.com/OwenMargiela/Scheduler/releases/download/v1/scheduler-cli.jar)
 
 
