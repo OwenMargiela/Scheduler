@@ -77,7 +77,7 @@ public class MultiLevelQueueTest {
     public void testExecutionConcurrentBatch() throws Exception {
 
         ConcurrentTest test = new ConcurrentTest();
-        test.runConcurrentSchedulerTest(scheduler, "mlqCpuLoad.csv");
+        test.runConcurrentSchedulerTest(scheduler);
 
     }
 

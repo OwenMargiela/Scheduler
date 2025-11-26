@@ -6,9 +6,7 @@ import java.util.Map;
 
 /**
  * Represents a task to be executed in a in a scheduling system.
- * <p>
- * 
- * <p>
+
  * 
  * 
  * 

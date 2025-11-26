@@ -2,13 +2,6 @@ package src.interfaces;
 
 import java.util.List;
 
-// Interface for
-
-// Round Robin
-// Priority Scheduling
-// Shortest Job first
-// Multi-level queue
-
 import java.util.Optional;
 
 import src.core.Job;

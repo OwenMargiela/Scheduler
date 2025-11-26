@@ -67,7 +67,7 @@ public class RoundRobinTest {
     public void testExecutionConcurrentBatch() throws Exception {
 
         ConcurrentTest test = new ConcurrentTest();
-        test.runConcurrentSchedulerTest(scheduler, "rrCpuLoad.csv");
+        test.runConcurrentSchedulerTest(scheduler);
 
     }
 

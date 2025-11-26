@@ -3,7 +3,7 @@ package src.algorithms;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+// import java.util.concurrent.atomic.AtomicInteger;
 
 import src.core.AttributeComparator;
 import src.core.Job;
@@ -48,7 +48,7 @@ public class OrderedQueue implements Queue {
 
     final int INITIAL_VAL = 11;
 
-    private final AtomicInteger current_t = new AtomicInteger();
+    // private final AtomicInteger current_t = new AtomicInteger();
 
     public OrderedQueue(AttributeComparator cmp) {
         this.queue = new PriorityBlockingQueue<>(this.INITIAL_VAL, cmp);
@@ -57,8 +57,8 @@ public class OrderedQueue implements Queue {
     @Override
     public void enqueue(Job job, int arrivalTime) {
 
-        if (current_t.get() < arrivalTime)
-            current_t.set(arrivalTime);
+        // if (current_t.get() < arrivalTime)
+        //     current_t.set(arrivalTime);
 
         if (this.on) {
             this.queue.add(job);
@@ -98,8 +98,8 @@ public class OrderedQueue implements Queue {
     @Override
     public void enqueueList(List<Job> jobs, int arrivalTime) {
 
-        if (current_t.get() < arrivalTime)
-            current_t.set(arrivalTime);
+        // if (current_t.get() < arrivalTime)
+        //     current_t.set(arrivalTime);
 
         if (on) {
 

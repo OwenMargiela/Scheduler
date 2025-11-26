@@ -16,6 +16,7 @@ public class TaskGenerator {
         job.setAttribute(JobAttribute.PRIORITY, priority);
         job.setAttribute(JobAttribute.SCHEDULED_PRIORITY, (int) (Math.random() * Short.MAX_VALUE + 1));
         job.setAttribute(JobAttribute.REMAINING_TIME, burstTime);
+        job.setAttribute(JobAttribute.ARRIVAL_TIME, 0);
         job.setPid(pid);
 
         return job;
@@ -36,6 +37,7 @@ public class TaskGenerator {
             job.setAttribute(JobAttribute.PRIORITY, priority);
             job.setAttribute(JobAttribute.REMAINING_TIME, burstTime);
             job.setAttribute(JobAttribute.SCHEDULED_PRIORITY, (int) (Math.random() * Short.MAX_VALUE + 1));
+            job.setAttribute(JobAttribute.ARRIVAL_TIME, 0);
             job.setPid(pid);
 
             jobs.add(job);

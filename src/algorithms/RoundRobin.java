@@ -3,7 +3,7 @@ package src.algorithms;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 import src.core.Job;
 import src.core.JobAttribute;
@@ -13,8 +13,6 @@ public class RoundRobin implements Queue {
 
     private ConcurrentLinkedQueue<src.core.Job> queue;
     private volatile boolean on;
-
-    private final AtomicInteger current_t = new AtomicInteger();
 
     private int TIME_SLICE = 3;
 
@@ -26,11 +24,6 @@ public class RoundRobin implements Queue {
 
     @Override
     public void enqueue(Job job, int arrivalTime) {
-
-        // Get the arrival time from the world clock in the scheduler
-
-        if (current_t.get() < arrivalTime)
-            current_t.set(arrivalTime);
 
         if (this.on) {
             this.queue.add(job);
@@ -56,8 +49,6 @@ public class RoundRobin implements Queue {
 
             remaining -= executionTime;
 
-            current_t.addAndGet(executionTime);
-
             // Decrement remaining time
             job.setAttribute(JobAttribute.REMAINING_TIME, remaining);
 
@@ -65,7 +56,7 @@ public class RoundRobin implements Queue {
                 queue.add(job); // not finished, back to queue
 
             } else {
-                job.setCompletionTime(current_t.get());
+
                 job.completed(true);
 
                 return Optional.ofNullable(job);
@@ -81,9 +72,6 @@ public class RoundRobin implements Queue {
 
     @Override
     public void enqueueList(List<Job> jobs, int arrivalTime) {
-
-        if (current_t.get() < arrivalTime)
-            current_t.set(arrivalTime);
 
         if (this.on) {
             this.queue.addAll(jobs);

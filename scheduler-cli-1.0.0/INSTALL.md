@@ -33,7 +33,7 @@
 1. Extract the ZIP file
 2. Double-click `scheduler-cli.bat` or run in Command Prompt:
    ```cmd
-   scheduler-cli.bat 
+   scheduler-cli.bat run --policy SJF
    ```
 3. (Optional) Add folder to PATH for global access
 
@@ -52,9 +52,6 @@ If Java is not installed:
   sudo apt-get update
   sudo apt-get install default-jre
   ```
-- **Linux (Fedora/RHEL)**:
-  ```bash
-  sudo dnf install java-11-openjdk
   ```
 - **macOS**:
   ```bash
@@ -87,13 +84,7 @@ OpenJDK Runtime Environment
 ./scheduler-cli metrics
 ```
 
-### Using JAR Directly (Any Platform)
-```bash
-java -jar scheduler-cli.jar run --policy SJF
-```
-
 ## Uninstallation
 
 Simply delete the extracted `scheduler-cli-1.0.0` folder.
 
-If you added to PATH, remove the symlink/shortcut manually.

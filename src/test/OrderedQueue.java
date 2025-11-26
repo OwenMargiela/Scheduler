@@ -104,7 +104,7 @@ public class OrderedQueue {
     public void testExecutionSjfConcurrentBatch() throws Exception {
 
         ConcurrentTest test = new ConcurrentTest();
-        test.runConcurrentSchedulerTest(sjf, "sjfCpuLoad.csv");
+        test.runConcurrentSchedulerTest(sjf);
 
     }
 
@@ -112,7 +112,7 @@ public class OrderedQueue {
     public void testExecutionPQConcurrentBatch() throws Exception {
 
         ConcurrentTest test = new ConcurrentTest();
-        test.runConcurrentSchedulerTest(priorityQueue, "priorityQueueCpuLoad.csv");
+        test.runConcurrentSchedulerTest(priorityQueue);
 
     }
 

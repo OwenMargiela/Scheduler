@@ -69,7 +69,7 @@ public class Scheduler {
      * using multiple {@link Policies}. Policies are assumed to be inserted
      * in priority order.
      *
-     * @param policies one or more scheduling policies used to configure
+     * @param policies two or more scheduling policies used to configure
      *                 the multi-level queue.
      */
     public Scheduler(Policies... policies) {
@@ -112,6 +112,7 @@ public class Scheduler {
      */
     public void push(Job process) {
         int arrivalTime = this.ticker.getTime();
+        // A counter that continually creates new pids
         process.setPid(this.counter.getAndIncrement());
         // Record arrival time for metrics
         process.setAttribute(JobAttribute.ARRIVAL_TIME, arrivalTime);
@@ -122,13 +123,13 @@ public class Scheduler {
                 process.setAttribute(JobAttribute.REMAINING_TIME, (Integer) bt);
             }
         }
+
         queue.enqueue(process, arrivalTime);
         this.ticker.tick();
     }
 
     /**
-     * Enqueues a list of {@link Job} instances into the scheduler, assigning
-     * them all the same arrival time.
+     * Enqueues a list of {@link Job} instances into the scheduler
      * <p>
      *
      * 
@@ -136,21 +137,33 @@ public class Scheduler {
      *                  empty.
      */
     public void append(List<Job> processes) {
-        int arrivalTime = this.ticker.getTime();
+
+        Integer lastArrival = ticker.getTime();
+
         for (Job job : processes) {
-            job.setPid(this.counter.getAndIncrement());
-            // Record arrival time for metrics
-            job.setAttribute(JobAttribute.ARRIVAL_TIME, arrivalTime);
-            // Ensure remaining time is initialized (use burst time if not set)
-            if (job.getAttribute(JobAttribute.REMAINING_TIME) == null) {
-                Object bt = job.getAttribute(JobAttribute.BURST_TIME);
-                if (bt instanceof Integer) {
-                    job.setAttribute(JobAttribute.REMAINING_TIME, (Integer) bt);
-                }
+
+            // Get the job’s intended arrival time
+            int arrival = job.getAttribute(JobAttribute.ARRIVAL_TIME, Integer.class);
+            System.out.println(arrival);
+
+            // Advance the simulation clock by the real gap
+            int gap = arrival - lastArrival;
+            if (gap > 0) {
+                ticker.advance(gap);
             }
+
+            lastArrival = arrival;
+
+            job.setPid(counter.getAndIncrement());
+
+            // Initialize remaining time
+            if (job.getAttribute(JobAttribute.REMAINING_TIME) == null) {
+                job.setAttribute(JobAttribute.REMAINING_TIME,
+                        job.getAttribute(JobAttribute.BURST_TIME, Integer.class));
+            }
+
+            queue.enqueue(job, arrival);
         }
-        queue.enqueueList(processes, arrivalTime);
-        this.ticker.tick();
     }
 
     /**
@@ -185,7 +198,6 @@ public class Scheduler {
                 // Record completion time (consistent across queue implementations)
                 int completion = this.ticker.getTime();
                 j.setCompletionTime(completion);
-                j.setAttribute(JobAttribute.COMPLETION_TIME, completion);
                 list.add(Optional.of(j));
             }
         }

@@ -1,13 +1,7 @@
 package src.test;
 
-import com.sun.management.OperatingSystemMXBean;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.opencsv.CSVWriter;
-
-import java.io.FileWriter;
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,11 +14,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import src.core.Job;
+import src.core.JobAttribute;
 import src.core.Scheduler;
 import src.core.TaskLoad;
 
 public class ConcurrentTest {
-    public void runConcurrentSchedulerTest(Scheduler scheduler, String policyFile) throws Exception {
+    public void runConcurrentSchedulerTest(Scheduler scheduler) throws Exception {
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -33,35 +28,10 @@ public class ConcurrentTest {
         CountDownLatch startSignal = new CountDownLatch(1);
         AtomicBoolean done = new AtomicBoolean(false);
 
-        OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-
-        // Csv File
-        CSVWriter writer = new CSVWriter(new FileWriter(policyFile, true));
-
-        Thread cpuMonitor = new Thread(() -> {
-
-            try {
-                while (!done.get() || !executorService.isTerminated()) {
-                    Double systemLoad = osBean.getCpuLoad() * 100;
-                    Double processLoad = osBean.getProcessCpuLoad() * 100;
-
-                    System.out.printf("[CPU] System: %.2f%% | JVM: %.2f%%%n", systemLoad, processLoad);
-                    writer.writeNext(new String[] { systemLoad.toString(), processLoad.toString() });
-                    writer.flush();
-                    Thread.sleep(50);
-                }
-
-                writer.close();
-
-            } catch (Exception e) {
-                Thread.currentThread().interrupt();
-            }
-        });
-
         // Producer thread
 
         TaskLoad[] loads = { TaskLoad.SHORT, TaskLoad.MODERATE, TaskLoad.LONG };
-        final int JOBS = 20000;
+        final int JOBS = 100;
         executorService.execute(() -> {
             try {
                 startSignal.await();
@@ -70,6 +40,7 @@ public class ConcurrentTest {
                     if (i % 2 == 0) {
                         TaskLoad randomLoad = loads[ThreadLocalRandom.current().nextInt(loads.length)];
                         scheduler.append(scheduler.makeList(randomLoad, 4));
+
                     }
                     scheduler.push(scheduler.make(TaskLoad.SHORT));
                 }
@@ -84,7 +55,11 @@ public class ConcurrentTest {
             try {
                 startSignal.await();
                 while (!scheduler.isEmpty() || !done.get()) {
+
                     List<Optional<Job>> result = scheduler.run();
+                    for (Optional<Job> job : result) {
+                        System.out.println(job.get().getAttribute(JobAttribute.BURST_TIME));
+                    }
 
                     batches.add(result);
                 }
@@ -93,15 +68,14 @@ public class ConcurrentTest {
             }
         });
 
-        cpuMonitor.start();
         startSignal.countDown();
         executorService.shutdown();
         boolean finished = executorService.awaitTermination(30, TimeUnit.SECONDS);
-        cpuMonitor.join();
 
         assertTrue(finished, "Executor did not finish in time");
 
         System.out.println("Queue Size " + scheduler.size());
+
         assertTrue(scheduler.isEmpty(), "Scheduler queue should be empty");
     }
 

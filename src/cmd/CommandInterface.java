@@ -32,17 +32,13 @@ import src.interfaces.Queue;
 import src.core.PerformanceAnalyzer;
 import java.io.PrintWriter;
 import java.io.File;
-// import java.io.FileNotFoundException;
-// import java.io.FileOutputStream;
-// import java.io.OutputStreamWriter;
-// import java.io.UnsupportedEncodingException;
 
 @Command(name = "Scheduler", version = "1.0", mixinStandardHelpOptions = true, description = "Interactive real-time scheduler CLI", subcommands = {
         CommandInterface.RunCommand.class,
         CommandInterface.AddCommand.class,
 
-    CommandInterface.ShowCompletedQueueCommand.class,
-    CommandInterface.MetricsCommand.class,
+        CommandInterface.ShowCompletedQueueCommand.class,
+        CommandInterface.MetricsCommand.class,
 
 })
 public class CommandInterface implements Runnable {
@@ -73,9 +69,6 @@ public class CommandInterface implements Runnable {
         @Option(names = {
                 "--queues" }, split = ",", description = "Queue policies for MLQ (comma-separated): e.g., SJF, RR, PRIORITY")
         private List<String> queuePolicies;
-
-        @Option(names = { "-o", "-output" }, description = "Flag to Log all completed jobs to the Completed Log")
-        private boolean output;
 
         @Override
         public void run() {
@@ -238,11 +231,13 @@ public class CommandInterface implements Runnable {
                             int burstTime = Integer.parseInt(row[0].trim());
                             int priority = Integer.parseInt(row[1].trim());
                             int schedledPriority = Integer.parseInt(row[2].trim());
+                            int arrival_time = Integer.parseInt(row[3].trim());
 
                             task.setAttribute(JobAttribute.BURST_TIME, burstTime);
                             task.setAttribute(JobAttribute.SCHEDULED_PRIORITY, schedledPriority);
                             task.setAttribute(JobAttribute.REMAINING_TIME, burstTime);
                             task.setAttribute(JobAttribute.PRIORITY, priority);
+                            task.setAttribute(JobAttribute.ARRIVAL_TIME, arrival_time);
 
                             tasks.add(task);
                         }
@@ -257,29 +252,6 @@ public class CommandInterface implements Runnable {
 
         }
     }
-
-    // // ========================
-    // // Cqueue SUBCOMMAND
-    // // ========================
-
-    // @Command(name = "cqueue ", mixinStandardHelpOptions = true, description =
-    // "Prints a snapt shot of the job queue")
-    // static class CheckCommand implements Runnable {
-
-    // @ParentCommand
-    // private CommandInterface parent; // Access to the parent's scheduler
-
-    // @Override
-    // public void run() {
-
-    // // TODO Auto-generated method stub
-
-    // }
-    // }
-
-    // ========================
-    // Cmqueue SUBCOMMAND
-    // ========================
 
     @Command(name = "cmqueue", mixinStandardHelpOptions = true, description = "Displays a list of all completed jobs")
     static class ShowCompletedQueueCommand implements Runnable {
@@ -310,7 +282,7 @@ public class CommandInterface implements Runnable {
         @ParentCommand
         private CommandInterface parent;
 
-        @Option(names = { "-s", "--save" }, description = "Optional CSV path to save per-job metrics")
+        @Option(names = { "-s", "--save" }, description = "Optional CSV path to save job metrics")
         private String savePath;
 
         @Override
@@ -377,7 +349,7 @@ public class CommandInterface implements Runnable {
 
                 try {
                     String[] cmdArgs = line.split("\\s+");
-                    cmd.execute(cmdArgs); // Execute on SAME app instance
+                    cmd.execute(cmdArgs);
                 } catch (Exception e) {
                     System.err.println("Error: " + e.getMessage());
                 }
@@ -386,7 +358,7 @@ public class CommandInterface implements Runnable {
             System.out.println("Goodbye!");
             scanner.close();
         } else {
-            // Single command mode
+
             int exitCode = cmd.execute(args);
 
             System.exit(exitCode);

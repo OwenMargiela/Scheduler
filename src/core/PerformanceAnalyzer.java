@@ -36,7 +36,7 @@ public class PerformanceAnalyzer {
             int completion = j.getCompletionTime();
 
             if (arrival == null || start == null || burst == null || completion <= 0) {
-                // skip malformed
+
                 continue;
             }
 

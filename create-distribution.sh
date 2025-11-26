@@ -21,6 +21,7 @@ touch $DIST_DIR/DOCUMENTAION.md
 # Copy files to distribution
 cp scheduler-cli.jar "$DIST_DIR/"
 cp scheduler-cli "$DIST_DIR/"
+
 cp README.md "$DIST_DIR/" 2>/dev/null || echo "# Scheduler CLI" > "$DIST_DIR/README.md"
 
 # Create improved Windows batch launcher with pause and Java check
