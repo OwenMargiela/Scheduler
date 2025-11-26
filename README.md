@@ -2,6 +2,8 @@
 
 A command-line CPU scheduling simulator supporting multiple scheduling algorithms with performance metrics and analysis.
 
+[Executable JAR](https://github.com/OwenMargiela/Scheduler/releases/download/v1/scheduler-cli.jar)
+
 ## Quick Start
 
 
